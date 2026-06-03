@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top 10 — Quiz Post-Conferencia | Go Live Alpina 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#00102E;--blue:#003DA5;--blue2:#0052CC;
+  --g-blue:#4285F4;--g-red:#EA4335;--g-yellow:#FBBC05;--g-green:#34A853;
+  --card:#001847;--border:rgba(255,255,255,0.10);--muted:#7B9AC4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:#00102E;
+  background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  font-family:'Nunito',sans-serif;color:#fff;min-height:100vh;
+  display:flex;flex-direction:column;
+}
+.top-bar{height:4px;background:linear-gradient(90deg,var(--g-blue) 25%,var(--g-red) 25% 50%,var(--g-yellow) 50% 75%,var(--g-green) 75%);flex-shrink:0;}
+
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);}
+.header-left h1{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;}
+.header-left h1 span{color:var(--g-yellow);}
+.header-left p{color:var(--muted);font-size:13px;margin-top:2px;}
+.live-badge{display:flex;align-items:center;gap:8px;background:rgba(52,168,83,0.15);border:1px solid rgba(52,168,83,0.3);border-radius:100px;padding:6px 16px;font-size:13px;font-weight:700;color:var(--g-green);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--g-green);animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+.main{flex:1;padding:32px 40px;max-width:900px;width:100%;margin:0 auto;}
+
+/* SALA SELECTOR */
+.sala-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 24px;display:flex;align-items:center;gap:16px;margin-bottom:32px;}
+.sala-bar label{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--muted);white-space:nowrap;}
+.sala-bar input{background:rgba(255,255,255,0.06);border:1.5px solid var(--border);border-radius:10px;color:#fff;font-family:'Montserrat',sans-serif;font-size:20px;font-weight:900;letter-spacing:4px;padding:8px 16px;outline:none;width:140px;text-transform:uppercase;transition:border .2s;}
+.sala-bar input:focus{border-color:var(--g-blue);}
+.btn-load{background:linear-gradient(135deg,var(--g-blue),var(--blue2));border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;padding:10px 24px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-load:hover{transform:translateY(-1px);}
+.conf-tag{background:rgba(66,133,244,0.15);border:1px solid rgba(66,133,244,0.2);border-radius:100px;padding:4px 16px;font-size:13px;font-weight:600;color:var(--g-blue);margin-left:auto;}
+
+/* RANKING LIST */
+.ranking-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.ranking-header h2{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;letter-spacing:1px;}
+.player-count{color:var(--muted);font-size:13px;}
+
+.ranking-list{display:flex;flex-direction:column;gap:10px;}
+
+.rank-row{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:16px 24px;display:flex;align-items:center;gap:16px;
+  animation:slideIn .4s ease both;position:relative;overflow:hidden;
+  transition:transform .2s;
+}
+.rank-row:hover{transform:translateX(4px);}
+.rank-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.rank-row.pos-1::before{background:var(--g-yellow);}
+.rank-row.pos-2::before{background:#9ca3af;}
+.rank-row.pos-3::before{background:#b45309;}
+.rank-row.pos-other::before{background:var(--g-blue);}
+.rank-row.pos-1{border-color:rgba(251,188,5,0.3);background:rgba(251,188,5,0.07);}
+.rank-row.pos-2{border-color:rgba(156,163,175,0.3);background:rgba(156,163,175,0.05);}
+.rank-row.pos-3{border-color:rgba(180,83,9,0.3);background:rgba(180,83,9,0.05);}
+
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+
+.rank-pos{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;width:44px;text-align:center;flex-shrink:0;}
+.rank-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;flex-shrink:0;}
+.pos-1 .rank-avatar{background:linear-gradient(135deg,#f59e0b,#f7c948);}
+.pos-2 .rank-avatar{background:linear-gradient(135deg,#9ca3af,#d1d5db);color:#111;}
+.pos-3 .rank-avatar{background:linear-gradient(135deg,#b45309,#d97706);}
+.pos-other .rank-avatar{background:rgba(66,133,244,0.2);color:var(--g-blue);}
+
+.rank-name{flex:1;font-size:18px;font-weight:700;}
+.rank-score{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;color:var(--g-yellow);}
+.rank-score span{font-size:13px;color:var(--muted);font-weight:600;margin-left:4px;}
+
+.rank-bar-wrap{width:120px;flex-shrink:0;}
+.rank-bar-track{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;}
+.rank-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--g-blue),var(--g-green));transition:width .8s ease;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state .empty-icon{font-size:64px;margin-bottom:16px;}
+.empty-state h3{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;margin-bottom:8px;color:#fff;}
+.empty-state p{font-size:14px;line-height:1.6;}
+
+.footer{text-align:center;padding:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:700;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+
+<div class="header">
+  <div class="header-left">
+    <h1>🏅 Top 10 — <span>Mejores Puntajes</span></h1>
+    <p>Quiz Post-Conferencia · Go Live Alpina 2026</p>
+  </div>
+  <div class="live-badge"><div class="live-dot"></div>EN VIVO</div>
+</div>
+
+<div class="main">
+  <div class="sala-bar">
+    <label>CÓDIGO DE SALA</label>
+    <input type="text" id="input-sala" placeholder="AB3X" maxlength="6">
+    <button class="btn-load" onclick="loadSala()">Cargar →</button>
+    <div class="conf-tag" id="conf-tag" style="display:none;"></div>
+  </div>
+
+  <div class="ranking-header">
+    <h2>CLASIFICACIÓN GENERAL</h2>
+    <div class="player-count" id="player-count"></div>
+  </div>
+
+  <div class="ranking-list" id="ranking-list">
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>Ingresa el código de sala</h3>
+      <p>El facilitador tiene el código en su pantalla.<br>El ranking se actualiza en tiempo real.</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">GO LIVE ALPINA 2026 · SERVINFORMACIÓN</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBSymU8ZEuwbopsg0Cf-eX2fMU7r1LDbPw",
+  authDomain: "alpina-go-live-2026.firebaseapp.com",
+  databaseURL: "https://alpina-go-live-2026-default-rtdb.firebaseio.com",
+  projectId: "alpina-go-live-2026",
+  storageBucket: "alpina-go-live-2026.appspot.com",
+  messagingSenderId: "664989840156",
+  appId: "1:664989840156:web:c9014078af4ecbbe9680d9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+let unsubscribe = null;
+
+// Pre-fill from URL param
+const urlParams = new URLSearchParams(window.location.search);
+const salaPre = urlParams.get('sala');
+if (salaPre) {
+  document.getElementById('input-sala').value = salaPre.toUpperCase();
+  loadSala();
+}
+
+window.loadSala = () => {
+  const codigo = document.getElementById('input-sala').value.trim().toUpperCase();
+  if (!codigo || codigo.length < 3) return;
+
+  if (unsubscribe) unsubscribe();
+
+  unsubscribe = onValue(ref(db, `quiz_conferencia/salas/${codigo}`), snap => {
+    const data = snap.val();
+    const list = document.getElementById('ranking-list');
+    const confTag = document.getElementById('conf-tag');
+    const countEl = document.getElementById('player-count');
+
+    if (!data || !data.jugadores) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <h3>Sala no encontrada</h3>
+          <p>Verifica el código con el facilitador.</p>
+        </div>`;
+      confTag.style.display = 'none';
+      countEl.textContent = '';
+      return;
+    }
+
+    // Show conference name
+    if (data.conferencia) {
+      confTag.textContent = data.conferencia;
+      confTag.style.display = 'block';
+    }
+
+    // Sort players by score
+    const jugadores = Object.entries(data.jugadores)
+      .map(([key, val]) => ({ nombre: val.nombre || key, score: val.score || 0 }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10); // top 10 only
+
+    const total = Object.keys(data.jugadores).length;
+    countEl.textContent = `${total} participante${total !== 1 ? 's' : ''} · mostrando top ${jugadores.length}`;
+
+    const maxScore = jugadores[0]?.score || 1;
+    const medals = ['🥇', '🥈', '🥉'];
+    const posClass = ['pos-1', 'pos-2', 'pos-3'];
+
+    list.innerHTML = jugadores.map((j, i) => {
+      const cls = i < 3 ? posClass[i] : 'pos-other';
+      const posLabel = i < 3 ? medals[i] : `${i + 1}°`;
+      const barPct = maxScore > 0 ? Math.round((j.score / maxScore) * 100) : 0;
+      const initial = j.nombre.charAt(0).toUpperCase();
+      return `
+        <div class="rank-row ${cls}" style="animation-delay:${i * 0.07}s">
+          <div class="rank-pos">${posLabel}</div>
+          <div class="rank-avatar">${initial}</div>
+          <div class="rank-name">${j.nombre}</div>
+          <div class="rank-bar-wrap">
+            <div class="rank-bar-track">
+              <div class="rank-bar-fill" style="width:${barPct}%"></div>
+            </div>
+          </div>
+          <div class="rank-score">${j.score}<span>pts</span></div>
+        </div>`;
+    }).join('');
+  });
+};
+</script>
+</body>
+</html>

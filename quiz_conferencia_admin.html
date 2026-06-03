@@ -154,6 +154,8 @@ body{
 .podium-block.third{height:72px;background:linear-gradient(180deg,rgba(180,83,9,0.3),rgba(180,83,9,0.1));border:2px solid rgba(180,83,9,0.4);}
 .block-num{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;opacity:0.6;}
 .btn-reset{background:linear-gradient(135deg,var(--g-red),#c0392b);border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;padding:14px 40px;cursor:pointer;box-shadow:0 8px 24px rgba(234,67,53,0.4);transition:all .2s;margin-top:16px;}
+.btn-top10{background:linear-gradient(135deg,var(--g-blue),var(--blue2));border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;padding:14px 40px;cursor:pointer;box-shadow:0 8px 24px rgba(66,133,244,0.4);transition:all .2s;margin-top:8px;text-decoration:none;display:inline-block;}
+.btn-top10:hover{transform:translateY(-2px);}
 .btn-reset:hover{transform:translateY(-2px);}
 
 /* RANKING in question screen */
@@ -283,7 +285,10 @@ body{
   <div class="podium-title">🏆 ¡Tenemos Ganadores!</div>
   <div class="podium-subtitle" id="podium-conf-name"></div>
   <div class="podium-stage" id="podium-stage"></div>
-  <button class="btn-reset" onclick="resetGame()">↩ Nueva Ronda</button>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <a id="btn-top10" class="btn-top10" target="_blank">🏅 Ver Top 10 completo</a>
+    <button class="btn-reset" onclick="resetGame()">↩ Nueva Ronda</button>
+  </div>
 </div>
 
 <div class="footer">
@@ -656,6 +661,9 @@ window.showPodium = async () => {
   renderPodium();
   startConfetti();
   playPartyMusic();
+  // Set Top 10 link with current room code
+  const top10Url = `https://monicacruz-momo.github.io/Alpina-conferencias-quiz/quiz_conferencia_ranking.html?sala=${roomCode}`;
+  document.getElementById('btn-top10').href = top10Url;
 };
 
 window.resetGame = async () => {
@@ -803,6 +811,15 @@ function showRanking() {
       scores[name] = (scores[name] || 0) + 100 + speedBonus;
     }
   });
+
+  // Write updated scores to Firebase so each player can read their own total
+  const scoresUpdate = {};
+  Object.entries(scores).forEach(([name, pts]) => {
+    scoresUpdate[`jugadores/${name}/score`] = pts;
+  });
+  if (Object.keys(scoresUpdate).length > 0) {
+    update(roomRef, scoresUpdate);
+  }
 
   const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]).slice(0,5);
   const panel = document.getElementById('ranking-panel');

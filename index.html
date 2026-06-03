@@ -35,6 +35,7 @@ h1 span{color:var(--g-yellow);}
 .nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .nav-card.admin::before{background:linear-gradient(90deg,var(--g-blue),var(--g-green));}
 .nav-card.player::before{background:linear-gradient(90deg,var(--g-yellow),var(--g-red));}
+.nav-card:not(.admin):not(.player)::before{background:linear-gradient(90deg,var(--g-yellow),var(--g-green));}
 .nav-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.2);box-shadow:0 16px 40px rgba(0,0,0,0.4);}
 .nav-card:active{transform:translateY(0);}
 
@@ -89,6 +90,15 @@ h1 span{color:var(--g-yellow);}
       <div class="card-body">
         <h2>Soy Participante</h2>
         <p>Abre esto en tu celular, ingresa tu nombre y el código de sala para jugar.</p>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a href="quiz_conferencia_ranking.html" class="nav-card" style="border-color:rgba(251,188,5,0.2);">
+      <div class="card-icon">🏅</div>
+      <div class="card-body">
+        <h2>Top 10 Ranking</h2>
+        <p>Consulta los mejores puntajes de cualquier sala en tiempo real.</p>
       </div>
       <div class="card-arrow">→</div>
     </a>

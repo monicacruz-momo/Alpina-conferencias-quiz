@@ -285,12 +285,20 @@ function listenState(safeKey) {
       }
     } else if (data.estado === 'revelada') {
       clearInterval(timerInterval);
+      // Read my updated score from Firebase (calculated by admin)
+      const myData = data.jugadores && data.jugadores[safeKey];
+      const serverScore = myData ? (myData.score || 0) : 0;
+      const prevScore = myScore;
+      myScore = serverScore;
+      const ptsGained = myScore - prevScore;
       if (!hasAnswered) {
-        // didn't answer in time
-        showFeedback(false, null, 0, data.respuestaCorrecta);
+        showFeedback(false, -1, 0, data.respuestaCorrecta);
+      } else {
+        const isCorrect = selectedOption === data.respuestaCorrecta;
+        showFeedback(isCorrect, selectedOption, ptsGained, data.respuestaCorrecta);
       }
     } else if (data.estado === 'podio') {
-      showFinalResults(safeKey);
+      showFinalResults(safeKey, data);
     }
   });
 }
@@ -339,7 +347,7 @@ function handleAnswer(optIdx, btn, q, qIdx, safeKey) {
 }
 
 function showFeedback(isCorrect, optIdx, ptsGained, correctIdx) {
-  // Reveal correct/wrong on question screen briefly
+  // Mark correct/wrong on buttons
   const btns = document.querySelectorAll('.opt-btn');
   btns.forEach((b, i) => {
     if (i === correctIdx) b.classList.add('correct');
@@ -347,25 +355,12 @@ function showFeedback(isCorrect, optIdx, ptsGained, correctIdx) {
   });
 
   setTimeout(() => {
-    if (isCorrect === null) {
-      // calculate
-      if (optIdx === correctIdx) {
-        const speedBonus = Math.round((answerTime / TOTAL_TIME) * 50);
-        ptsGained = 100 + speedBonus;
-        isCorrect = true;
-      } else {
-        ptsGained = 0;
-        isCorrect = false;
-      }
-    }
-
-    if (isCorrect) myScore += ptsGained;
-
     showScreen('feedback');
     document.getElementById('feedback-icon').textContent = isCorrect ? '✅' : '❌';
     document.getElementById('feedback-title').textContent = isCorrect ? '¡Correcto!' : '¡Incorrecto!';
+    const speedBonus = ptsGained > 100 ? ptsGained - 100 : 0;
     document.getElementById('feedback-subtitle').textContent = isCorrect
-      ? `Velocidad: +${ptsGained - 100} pts bonus` : 'Sin puntos esta vez';
+      ? `Velocidad: +${speedBonus} pts bonus` : 'Sin puntos esta vez';
     document.getElementById('pts-earned').textContent = isCorrect ? `+${ptsGained}` : '0';
     document.getElementById('pts-earned').style.color = isCorrect ? 'var(--g-green)' : 'var(--g-red)';
     document.getElementById('total-pts').textContent = `${myScore} pts`;
@@ -400,16 +395,21 @@ function startTimerBar(safeKey, q, qIdx) {
   }, 1000);
 }
 
-async function showFinalResults(safeKey) {
+async function showFinalResults(safeKey, firebaseData) {
   showScreen('results');
   document.getElementById('my-rank-name').textContent = playerName;
+
+  // Get final score from Firebase
+  const jugadores = firebaseData && firebaseData.jugadores ? firebaseData.jugadores : {};
+  const myFinalScore = jugadores[safeKey] ? (jugadores[safeKey].score || 0) : myScore;
+  myScore = myFinalScore;
   document.getElementById('my-rank-pts-val').textContent = `${myScore} pts`;
 
-  // Get all scores to compute rank
-  const jugSnap = await get(ref(db, `quiz_conferencia/salas/${roomCode}/jugadores`));
-  // We can't get all scores easily without them being stored; show own score
+  // Compute rank among all players
+  const allScores = Object.values(jugadores).map(j => j.score || 0).sort((a,b) => b-a);
+  const myRank = allScores.indexOf(myScore) + 1;
   const medals = ['🥇','🥈','🥉'];
-  document.getElementById('my-rank-pos').textContent = myScore > 0 ? '🎉' : '😅';
+  document.getElementById('my-rank-pos').textContent = medals[myRank-1] || `#${myRank}`;
 }
 
 function showScreen(id) {
