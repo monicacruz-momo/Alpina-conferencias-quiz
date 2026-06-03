@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Post-Conferencia — Admin | Go Live Alpina 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #00102E;
+  --blue: #003DA5;
+  --blue2: #0052CC;
+  --g-blue: #4285F4;
+  --g-red: #EA4335;
+  --g-yellow: #FBBC05;
+  --g-green: #34A853;
+  --card: #001847;
+  --border: rgba(255,255,255,0.10);
+  --muted: #7B9AC4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:#00102E;
+  background-image: linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  font-family:'Nunito',sans-serif;
+  color:#fff;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.top-bar{height:4px;background:linear-gradient(90deg,var(--g-blue) 25%,var(--g-red) 25% 50%,var(--g-yellow) 50% 75%,var(--g-green) 75%);}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);}
+.header h1{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;}
+.header h1 span{color:var(--g-yellow);}
+.room-badge{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 20px;font-size:13px;font-weight:700;letter-spacing:2px;}
+.room-badge span{color:var(--g-yellow);font-size:18px;margin-left:8px;}
+
+/* SCREENS */
+.screen{display:none;animation:fadeIn .4s ease;}
+.screen.active{display:flex;flex-direction:column;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SETUP SCREEN */
+#screen-setup{align-items:center;justify-content:center;min-height:calc(100vh - 100px);padding:40px 20px;}
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px;max-width:600px;width:100%;text-align:center;position:relative;overflow:hidden;}
+.setup-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g-blue),var(--g-green));}
+.setup-card h2{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;margin-bottom:8px;}
+.setup-card p{color:var(--muted);margin-bottom:32px;font-size:15px;}
+.conf-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:24px;}
+.conf-btn{background:#001133;border:2px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all .2s;text-align:left;color:#fff;}
+.conf-btn:hover,.conf-btn.selected{border-color:var(--g-blue);background:rgba(66,133,244,0.15);}
+.conf-btn .conf-num{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--g-blue);margin-bottom:4px;}
+.conf-btn .conf-title{font-size:14px;font-weight:700;}
+.btn-primary{background:linear-gradient(135deg,var(--g-blue),var(--blue2));border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;padding:14px 40px;cursor:pointer;box-shadow:0 8px 24px rgba(66,133,244,0.4);transition:all .2s;width:100%;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(66,133,244,0.5);}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+
+/* LOBBY SCREEN */
+#screen-lobby{padding:24px 32px;min-height:calc(100vh - 100px);}
+.lobby-grid{display:grid;grid-template-columns:1fr 320px;gap:24px;height:calc(100vh - 180px);}
+.lobby-left{display:flex;flex-direction:column;gap:16px;}
+.lobby-qr-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;display:flex;align-items:center;gap:24px;position:relative;overflow:hidden;}
+.lobby-qr-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g-yellow),var(--g-red));}
+#qr-container{background:#fff;padding:12px;border-radius:12px;flex-shrink:0;}
+#qr-container canvas,#qr-container img{display:block;}
+.qr-info h3{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px;}
+.qr-info .url-text{color:var(--g-blue);font-size:14px;font-weight:600;word-break:break-all;margin-bottom:8px;}
+.qr-info p{color:var(--muted);font-size:13px;}
+.room-code-big{font-family:'Montserrat',sans-serif;font-size:42px;font-weight:900;letter-spacing:8px;color:var(--g-yellow);margin:8px 0;}
+
+.players-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.players-card h3{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:16px;}
+.players-count{font-family:'Montserrat',sans-serif;font-size:48px;font-weight:900;color:var(--g-green);margin-bottom:4px;}
+.players-list{overflow-y:auto;flex:1;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;margin-top:8px;}
+.player-chip{background:rgba(52,168,83,0.15);border:1px solid rgba(52,168,83,0.3);border-radius:100px;padding:4px 14px;font-size:13px;font-weight:600;color:#a8d8b8;animation:chipIn .3s ease;}
+@keyframes chipIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+
+.lobby-right{display:flex;flex-direction:column;gap:16px;}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;position:relative;overflow:hidden;}
+.info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.info-card.blue::before{background:var(--g-blue);}
+.info-card.yellow::before{background:var(--g-yellow);}
+.info-card h4{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
+.info-card .val{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;}
+.btn-start{background:linear-gradient(135deg,var(--g-green),#28a745);border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:18px;font-weight:700;padding:18px;cursor:pointer;box-shadow:0 8px 24px rgba(52,168,83,0.4);transition:all .2s;width:100%;margin-top:auto;}
+.btn-start:hover{transform:translateY(-2px);}
+
+/* QUESTION SCREEN */
+#screen-question{padding:24px 32px;min-height:calc(100vh - 100px);}
+.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.q-progress{display:flex;gap:8px;}
+.q-dot{width:32px;height:8px;border-radius:4px;background:rgba(255,255,255,0.15);transition:background .3s;}
+.q-dot.done{background:var(--g-green);}
+.q-dot.active{background:var(--g-yellow);}
+
+.timer-ring{position:relative;width:80px;height:80px;flex-shrink:0;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-ring circle{transition:stroke-dashoffset .9s linear,stroke .5s;}
+#timer-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;}
+
+.q-body{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;margin-bottom:20px;position:relative;overflow:hidden;}
+.q-body::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g-blue),var(--g-red),var(--g-yellow),var(--g-green));}
+.q-num{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:12px;}
+.q-text{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:800;line-height:1.3;}
+
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.option-card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;gap:14px;transition:all .3s;}
+.option-card.revealed-correct{border-color:var(--g-green);background:rgba(52,168,83,0.2);}
+.option-card.revealed-wrong{border-color:var(--g-red);background:rgba(234,67,53,0.1);opacity:0.6;}
+.opt-letter{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;flex-shrink:0;}
+.opt-letter.a{background:rgba(66,133,244,0.3);color:var(--g-blue);}
+.opt-letter.b{background:rgba(234,67,53,0.3);color:var(--g-red);}
+.opt-letter.c{background:rgba(251,188,5,0.3);color:var(--g-yellow);}
+.opt-letter.d{background:rgba(52,168,83,0.3);color:var(--g-green);}
+.opt-text{font-size:15px;font-weight:600;line-height:1.3;}
+
+.q-controls{display:flex;gap:12px;}
+.btn-reveal{background:linear-gradient(135deg,var(--g-yellow),#f59e0b);border:none;border-radius:100px;color:#00102E;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;padding:12px 28px;cursor:pointer;transition:all .2s;}
+.btn-next{background:linear-gradient(135deg,var(--g-blue),var(--blue2));border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;padding:12px 28px;cursor:pointer;transition:all .2s;margin-left:auto;}
+.btn-reveal:hover,.btn-next:hover{transform:translateY(-1px);}
+
+.live-answers{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.live-answers h4{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:12px;}
+.ans-bars{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ans-bar{display:flex;align-items:center;gap:8px;}
+.ans-bar-label{font-size:13px;font-weight:700;width:16px;}
+.ans-bar-track{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+.ans-bar-fill{height:100%;border-radius:4px;transition:width .5s ease;}
+.ans-bar-fill.a{background:var(--g-blue);}
+.ans-bar-fill.b{background:var(--g-red);}
+.ans-bar-fill.c{background:var(--g-yellow);}
+.ans-bar-fill.d{background:var(--g-green);}
+.ans-bar-count{font-size:12px;font-weight:700;color:var(--muted);width:20px;text-align:right;}
+
+/* PODIUM SCREEN */
+#screen-podium{align-items:center;justify-content:center;min-height:calc(100vh - 100px);padding:40px 20px;position:relative;overflow:hidden;}
+.confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;}
+.podium-title{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;text-align:center;margin-bottom:8px;background:linear-gradient(135deg,var(--g-yellow),var(--g-red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.podium-subtitle{color:var(--muted);text-align:center;margin-bottom:48px;font-size:16px;}
+.podium-stage{display:flex;align-items:flex-end;justify-content:center;gap:16px;margin-bottom:40px;}
+.podium-place{display:flex;flex-direction:column;align-items:center;opacity:0;transform:translateY(60px);}
+.podium-place.show{animation:podiumRise .8s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes podiumRise{to{opacity:1;transform:translateY(0)}}
+.podium-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;margin-bottom:8px;position:relative;}
+.podium-avatar.first{width:90px;height:90px;font-size:36px;background:linear-gradient(135deg,#f59e0b,#f7c948);box-shadow:0 0 40px rgba(245,158,11,0.6);}
+.podium-avatar.second{background:linear-gradient(135deg,#9ca3af,#d1d5db);box-shadow:0 0 20px rgba(156,163,175,0.4);}
+.podium-avatar.third{background:linear-gradient(135deg,#b45309,#d97706);box-shadow:0 0 20px rgba(180,83,9,0.4);}
+.crown{position:absolute;top:-14px;font-size:20px;}
+.podium-name{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px;text-align:center;max-width:140px;word-break:break-word;}
+.podium-score{font-size:13px;color:var(--muted);margin-bottom:12px;}
+.podium-block{border-radius:12px 12px 0 0;width:140px;display:flex;align-items:center;justify-content:center;}
+.podium-block.first{height:140px;background:linear-gradient(180deg,rgba(245,158,11,0.3),rgba(245,158,11,0.1));border:2px solid rgba(245,158,11,0.4);}
+.podium-block.second{height:100px;background:linear-gradient(180deg,rgba(156,163,175,0.3),rgba(156,163,175,0.1));border:2px solid rgba(156,163,175,0.4);}
+.podium-block.third{height:72px;background:linear-gradient(180deg,rgba(180,83,9,0.3),rgba(180,83,9,0.1));border:2px solid rgba(180,83,9,0.4);}
+.block-num{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;opacity:0.6;}
+.btn-reset{background:linear-gradient(135deg,var(--g-red),#c0392b);border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;padding:14px 40px;cursor:pointer;box-shadow:0 8px 24px rgba(234,67,53,0.4);transition:all .2s;margin-top:16px;}
+.btn-reset:hover{transform:translateY(-2px);}
+
+/* RANKING in question screen */
+#ranking-panel{display:none;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-top:16px;}
+.rank-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);}
+.rank-row:last-child{border-bottom:none;}
+.rank-pos{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;width:28px;text-align:center;}
+.rank-name{flex:1;font-weight:600;}
+.rank-pts{font-family:'Montserrat',sans-serif;font-weight:700;color:var(--g-yellow);}
+
+/* FOOTER */
+.footer{display:flex;align-items:center;justify-content:center;gap:32px;padding:16px;border-top:1px solid var(--border);margin-top:auto;}
+.footer img{height:28px;object-fit:contain;filter:brightness(0) invert(1);}
+
+.pulse{animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+<div class="header">
+  <h1>🎯 Quiz Post-Conferencia <span>Go Live Alpina 2026</span></h1>
+  <div class="room-badge">SALA: <span id="header-room">----</span></div>
+</div>
+
+<!-- SETUP SCREEN -->
+<div id="screen-setup" class="screen active">
+  <div class="setup-card">
+    <h2>Selecciona la Conferencia</h2>
+    <p>Elige el bloque de preguntas para esta sesión</p>
+    <div class="conf-grid">
+      <button class="conf-btn" data-conf="0" onclick="selectConf(0)">
+        <div class="conf-num">CONFERENCIA 1</div>
+        <div class="conf-title">🧠 NotebookLM a Otro Nivel</div>
+      </button>
+      <button class="conf-btn" data-conf="1" onclick="selectConf(1)">
+        <div class="conf-num">CONFERENCIA 2</div>
+        <div class="conf-title">🤖 Alpina — Manos a la IA</div>
+      </button>
+      <button class="conf-btn" data-conf="2" onclick="selectConf(2)">
+        <div class="conf-num">CONFERENCIA 3</div>
+        <div class="conf-title">🎬 Google Vids</div>
+      </button>
+
+    </div>
+    <button class="btn-primary" id="btn-create-room" disabled onclick="createRoom()">Crear Sala →</button>
+  </div>
+</div>
+
+<!-- LOBBY SCREEN -->
+<div id="screen-lobby" class="screen">
+  <div class="lobby-grid">
+    <div class="lobby-left">
+      <div class="lobby-qr-card">
+        <div id="qr-container"></div>
+        <div class="qr-info">
+          <h3>¡Únete al Quiz!</h3>
+          <div class="url-text" id="player-url-display"></div>
+          <p>Escanea el QR o ingresa la URL desde tu celular</p>
+          <div>Código de sala:</div>
+          <div class="room-code-big" id="room-code-display">----</div>
+        </div>
+      </div>
+      <div class="players-card">
+        <h3>JUGADORES CONECTADOS</h3>
+        <div class="players-count" id="player-count">0</div>
+        <div class="players-list" id="players-list"></div>
+      </div>
+    </div>
+    <div class="lobby-right">
+      <div class="info-card blue">
+        <h4>CONFERENCIA</h4>
+        <div class="val" id="conf-name-display" style="font-size:16px;margin-top:4px;"></div>
+      </div>
+      <div class="info-card yellow">
+        <h4>PREGUNTAS</h4>
+        <div class="val">5 preguntas</div>
+      </div>
+      <div class="info-card blue">
+        <h4>TIEMPO POR PREGUNTA</h4>
+        <div class="val">40 seg</div>
+      </div>
+      <button class="btn-start" id="btn-start-quiz" onclick="startQuiz()">▶ Iniciar Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTION SCREEN -->
+<div id="screen-question" class="screen">
+  <div class="q-header">
+    <div class="q-progress" id="q-progress"></div>
+    <div style="flex:1;text-align:center;">
+      <div style="font-size:13px;color:var(--muted);font-weight:700;letter-spacing:1px;" id="q-count-label">PREGUNTA 1 DE 5</div>
+    </div>
+    <div class="timer-ring">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+        <circle id="timer-circle" cx="40" cy="40" r="34" fill="none" stroke="#34A853" stroke-width="6" stroke-linecap="round"
+          stroke-dasharray="213.6" stroke-dashoffset="0"/>
+      </svg>
+      <div id="timer-text">40</div>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-num" id="q-num-label">PREGUNTA 1</div>
+    <div class="q-text" id="q-text">Cargando pregunta...</div>
+  </div>
+  <div class="options-grid" id="options-grid"></div>
+  <div class="live-answers">
+    <h4>RESPUESTAS EN VIVO</h4>
+    <div class="ans-bars" id="ans-bars"></div>
+  </div>
+  <div id="ranking-panel">
+    <h4 style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">RANKING PARCIAL</h4>
+    <div id="ranking-list"></div>
+  </div>
+  <div class="q-controls" style="margin-top:16px;">
+    <button class="btn-reveal" id="btn-reveal" onclick="revealAnswer()">Revelar Respuesta</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()" style="display:none;">Siguiente Pregunta →</button>
+    <button class="btn-next" id="btn-finish" onclick="showPodium()" style="display:none;background:linear-gradient(135deg,var(--g-yellow),#f59e0b);color:#00102E;">🏆 Ver Podio Final</button>
+  </div>
+</div>
+
+<!-- PODIUM SCREEN -->
+<div id="screen-podium" class="screen">
+  <canvas class="confetti-canvas" id="confetti-canvas"></canvas>
+  <div class="podium-title">🏆 ¡Tenemos Ganadores!</div>
+  <div class="podium-subtitle" id="podium-conf-name"></div>
+  <div class="podium-stage" id="podium-stage"></div>
+  <button class="btn-reset" onclick="resetGame()">↩ Nueva Ronda</button>
+</div>
+
+<div class="footer">
+  <span style="color:var(--muted);font-size:12px;font-weight:700;">GO LIVE ALPINA 2026 · SERVINFORMACIÓN</span>
+</div>
+
+<!-- QR Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+import { getDatabase, ref, set, get, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBSymU8ZEuwbopsg0Cf-eX2fMU7r1LDbPw",
+  authDomain: "alpina-go-live-2026.firebaseapp.com",
+  databaseURL: "https://alpina-go-live-2026-default-rtdb.firebaseio.com",
+  projectId: "alpina-go-live-2026",
+  storageBucket: "alpina-go-live-2026.appspot.com",
+  messagingSenderId: "664989840156",
+  appId: "1:664989840156:web:c9014078af4ecbbe9680d9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ══════════════════════════════════════════
+// BANCO DE PREGUNTAS
+// ══════════════════════════════════════════
+const CONFERENCIAS = [
+  {
+    nombre: "NotebookLM a Otro Nivel",
+    preguntas: [
+      {
+        texto: "¿Cuál es la función principal y el valor que ofrece NotebookLM?",
+        opciones: [
+          "Diseñar interfaces gráficas y prototipos de páginas web para clientes.",
+          "Recopilar información relevante en un solo lugar y usar IA para organizarla, generar resúmenes y encontrar conexiones.",
+          "Sustituir completamente a Google Drive como sistema de almacenamiento en la nube.",
+          "Programar automáticamente código Python a partir de diagramas de flujo."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Al momento de cargar información, ¿cuál es el límite máximo de fuentes que permite NotebookLM?",
+        opciones: [
+          "100 fuentes por cuaderno.",
+          "300 fuentes por cuaderno.",
+          "500 fuentes por cuaderno.",
+          "No tiene límite de fuentes."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Qué formatos de archivo específicos admite NotebookLM para subir como fuentes?",
+        opciones: [
+          "Archivos ejecutables (.exe, .bat).",
+          "Archivos de diseño gráfico vectorial (.ai, .psd).",
+          "PDF, .txt, Markdown y Audio (ej. mp3).",
+          "Exclusivamente archivos de hojas de cálculo (.xlsx, .csv)."
+        ],
+        correcta: 2
+      },
+      {
+        texto: "Al configurar el chat de tu cuaderno en NotebookLM, ¿qué perfiles predeterminados puedes elegir?",
+        opciones: [
+          "Amistoso, Serio, Cómico y Neutro.",
+          "Programador, Diseñador, Escritor y Contador.",
+          "Resumido, Extendido, Viñetas y Tabla.",
+          "Predeterminado, Analista, Guía y Personalizado."
+        ],
+        correcta: 3
+      },
+      {
+        texto: "¿Qué función de NotebookLM transforma reportes escritos en 'podcasts'?",
+        opciones: [
+          "Traductor de Jerga (simplificación de lenguaje).",
+          "Clonado de Estilo (imitación de tono).",
+          "Función 'Audio Overview' o Resumen de Audio.",
+          "Actas de Reunión (creación de tablas de tareas)."
+        ],
+        correcta: 2
+      },
+      {
+        texto: "¿Cuál de los siguientes NO es un formato de generación de material de estudio en NotebookLM?",
+        opciones: [
+          "Tarjetas didácticas (Flashcards) y Mapas mentales.",
+          "Cuestionarios e Infografías.",
+          "Modelos 3D y simulaciones de realidad aumentada.",
+          "Resúmenes de audio y Resúmenes de video."
+        ],
+        correcta: 2
+      },
+      {
+        texto: "¿Cuáles son las capacidades principales de la IA sobre los datos en NotebookLM?",
+        opciones: [
+          "Traduce automáticamente los documentos a múltiples idiomas.",
+          "Elimina la información duplicada y comprime archivos.",
+          "Ayuda a organizar, generar resúmenes y encontrar conexiones entre datos.",
+          "Convierte todo el texto en animaciones 3D para realidad virtual."
+        ],
+        correcta: 2
+      }
+    ]
+  },
+  {
+    nombre: "Alpina — Manos a la IA",
+    preguntas: [
+      {
+        texto: "¿Cuáles herramientas forman parte del ecosistema de Google en IA Generativa?",
+        opciones: [
+          "ChatGPT, Midjourney, Dall-E y Claude.",
+          "Gemini, NotebookLM, Google AI Studio, Pomelli, Veo y Stitch.",
+          "Watson, Azure AI, AWS Sagemaker y Copilot.",
+          "Canva, Adobe Firefly, Figma y Notion AI."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Cómo se describe a 'Google AI Studio'?",
+        opciones: [
+          "Una red social corporativa exclusiva para empleados de Alpina.",
+          "Una plataforma para explorar, experimentar y crear prototipos usando los modelos de IA más avanzados de Google.",
+          "Un software de diseño gráfico para crear empaques de productos.",
+          "Una herramienta financiera para gestión y proyección de ventas."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "Al hablar de Veo para generación de video, ¿cuáles características se destacan?",
+        opciones: [
+          "Generación exclusiva de gráficos en 3D y simulaciones de realidad virtual.",
+          "Edición de código fuente HTML y creación de bases de datos.",
+          "Audio nativo integrado, alto realismo, coherencia temporal y control del primer y último cuadro.",
+          "Creación automática de hojas de cálculo y presentaciones estáticas."
+        ],
+        correcta: 2
+      },
+      {
+        texto: "¿Qué herramientas están integradas con Gemini a través de 'Extensiones'?",
+        opciones: [
+          "Google Analytics, Google Ads y Google Trends.",
+          "Documentos de Google, Gmail, Calendar, Drive y Tasks.",
+          "YouTube, Google Maps y Google Flights.",
+          "Google Sites, Google Blogger y Google Data Studio."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Cuáles son algunos de los Gems prediseñados por Google?",
+        opciones: [
+          "Creador de logotipos, Editor de videos y Gestor de redes sociales.",
+          "Storybook, Exploración de ideas, Orientación profesional y Asistente de programación.",
+          "Asistente de ventas, Analista financiero y Generador de contratos.",
+          "Traductor simultáneo, Corrector ortográfico y Creador de encuestas."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Qué funciones de edición se pueden realizar con Stitch o Nano Banana?",
+        opciones: [
+          "Texto a imagen, transferencia de estilo, composición multiimagen, imagen+texto a imagen, y coherencia de personajes.",
+          "Conversión de archivos PDF a formato de audio interactivo.",
+          "Análisis de grandes volúmenes de texto legal para resumir contratos.",
+          "Composición musical automática a partir de instrucciones en texto."
+        ],
+        correcta: 0
+      },
+      {
+        texto: "¿Qué otras capacidades permite explorar Google AI Studio además de imágenes y video?",
+        opciones: [
+          "Modelado 3D arquitectónico e impresión 3D.",
+          "Código y chat, Habla y música, y procesamiento en tiempo real.",
+          "Generación de hologramas y realidad aumentada.",
+          "Análisis forense de datos y ciberseguridad avanzada."
+        ],
+        correcta: 1
+      }
+    ]
+  },
+  {
+    nombre: "Google Vids",
+    preguntas: [
+      {
+        texto: "¿Cómo se inicia principalmente la creación de un video en Google Vids con IA?",
+        opciones: [
+          "Insertando un prompt en lenguaje natural o un guion mediante 'Ayúdame a crear'.",
+          "Subiendo únicamente archivos de video grabados con cámara profesional.",
+          "Utilizando códigos en Apps Script para programar cada fotograma.",
+          "Conectando una base de datos SQL directamente al editor."
+        ],
+        correcta: 0
+      },
+      {
+        texto: "¿En qué consiste la demostración sobre el 'Manejo de avatares' en Google Vids?",
+        opciones: [
+          "Edición avanzada de personajes en 3D para videojuegos multijugador.",
+          "Un narrador o presentador digital fotorrealista que relata el guion del video.",
+          "Configuración de fotos de perfil para cuentas de Gmail y Google Chat.",
+          "Sistema de seguridad biométrica basado en reconocimiento facial."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Qué describe mejor la función de 'Voz en off' con IA en Google Vids?",
+        opciones: [
+          "Grabar audio con micrófonos externos de estudio y ecualizarlos manualmente.",
+          "Convertir texto a voz (text-to-speech) seleccionando tonos de voz e idiomas.",
+          "Clonar voces de celebridades internacionales sin autorización.",
+          "Silenciar el video completamente para solo dejar imágenes fijas."
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Cómo apoya la IA de Google Vids en la 'Ambientación Musical'?",
+        opciones: [
+          "Facilitando la creación o selección de música con IA adaptada a estilos o emociones como alegre, corporativo o inspirador.",
+          "Descargando canciones comerciales famosas de plataformas de streaming.",
+          "Configurando conexiones físicas de instrumentos y sintetizadores MIDI.",
+          "Creando partituras escritas para que una orquesta física las ensaye."
+        ],
+        correcta: 0
+      },
+      {
+        texto: "¿Cuál es una ventaja clave de accesibilidad que ofrece Google Vids?",
+        opciones: [
+          "La generación automática de subtítulos a partir de la pista de voz o del guion del video.",
+          "La interpretación de videos a lenguaje de señas mediante animación 3D.",
+          "El bloqueo de reproducción si el espectador no tiene auriculares puestos.",
+          "La eliminación de todo el texto en pantalla para concentrarse en el sonido."
+        ],
+        correcta: 0
+      },
+      {
+        texto: "¿Qué función cumple la herramienta de 'Teleprompter' en Google Vids?",
+        opciones: [
+          "Permite leer el guion en la pantalla de forma fluida mientras se graba video.",
+          "Traduce en vivo la voz del orador a más de cinco idiomas en tiempo real.",
+          "Ajusta automáticamente los colores del fondo a los estándares de marca de Alpina.",
+          "Envía correos automáticos a invitados de Google Meet avisando del nuevo video."
+        ],
+        correcta: 0
+      },
+      {
+        texto: "¿Cuál es el objetivo y duración de la conferencia de Google Vids en el plan de Alpina?",
+        opciones: [
+          "Enseñar programación avanzada de macros en 120 minutos.",
+          "Mostrar en 30 minutos cómo Workspace con Gemini puede mejorar el trabajo diario mediante creación de video.",
+          "Explicar la consola de administración de TI y ciberseguridad en 3 horas.",
+          "Diseñar empaques 3D de productos de Alpina en 15 minutos."
+        ],
+        correcta: 1
+      }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let selectedConf = -1;
+let roomCode = '';
+let currentQ = 0;
+let questions = [];
+let scores = {};
+let timerInterval = null;
+let timeLeft = 40;
+let answered = {};
+let answerCounts = {0:0, 1:0, 2:0, 3:0};
+let roomRef = null;
+let unsubPlayers = null;
+let unsubAnswers = null;
+let playerNames = {};
+const PLAYER_URL_BASE = 'https://kaleidoscopic-taiyaki-52e69f.netlify.app/quiz_conferencia_jugador.html';
+const LETTERS = ['A','B','C','D'];
+const COLORS = ['a','b','c','d'];
+
+// ══════════════════════════════════════════
+// EXPOSED TO WINDOW
+// ══════════════════════════════════════════
+window.selectConf = (idx) => {
+  selectedConf = idx;
+  document.querySelectorAll('.conf-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector(`[data-conf="${idx}"]`).classList.add('selected');
+  document.getElementById('btn-create-room').disabled = false;
+};
+
+window.createRoom = async () => {
+  roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+  document.getElementById('header-room').textContent = roomCode;
+
+  // shuffle 5 questions from the block
+  const pool = [...CONFERENCIAS[selectedConf].preguntas];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  questions = pool.slice(0, 5);
+  scores = {};
+  currentQ = 0;
+
+  roomRef = ref(db, `quiz_conferencia/salas/${roomCode}`);
+  await set(roomRef, {
+    estado: 'lobby',
+    conferencia: CONFERENCIAS[selectedConf].nombre,
+    preguntaActual: -1,
+    jugadores: {}
+  });
+
+  showScreen('lobby');
+  setupLobby();
+};
+
+window.startQuiz = async () => {
+  if (Object.keys(playerNames).length === 0) {
+    alert('Espera a que al menos un jugador se una.');
+    return;
+  }
+  // Send questions to Firebase (without marking correct answer)
+  const preguntasParaFirebase = questions.map(q => ({
+    texto: q.texto,
+    opciones: q.opciones
+    // correcta is NOT sent to Firebase — only in admin memory
+  }));
+  await update(roomRef, {
+    estado: 'pregunta',
+    preguntaActual: 0,
+    preguntas: preguntasParaFirebase
+  });
+  showQuestion(0);
+  showScreen('question');
+  playTensionMusic();
+};
+
+window.revealAnswer = async () => {
+  clearInterval(timerInterval);
+  const q = questions[currentQ];
+  // Reveal in UI
+  const opts = document.querySelectorAll('.option-card');
+  opts.forEach((el, i) => {
+    el.classList.add(i === q.correcta ? 'revealed-correct' : 'revealed-wrong');
+  });
+  document.getElementById('btn-reveal').style.display = 'none';
+  // Show ranking
+  showRanking();
+  if (currentQ < 4) {
+    document.getElementById('btn-next').style.display = 'block';
+  } else {
+    document.getElementById('btn-finish').style.display = 'block';
+  }
+  // Notify players
+  await update(roomRef, { estado: 'revelada', respuestaCorrecta: q.correcta });
+};
+
+window.nextQuestion = async () => {
+  currentQ++;
+  answered = {};
+  answerCounts = {0:0,1:0,2:0,3:0};
+  document.getElementById('ranking-panel').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  await update(roomRef, { estado: 'pregunta', preguntaActual: currentQ });
+  showQuestion(currentQ);
+};
+
+window.showPodium = async () => {
+  stopMusic();
+  await update(roomRef, { estado: 'podio' });
+  showScreen('podium');
+  renderPodium();
+  startConfetti();
+  playPartyMusic();
+};
+
+window.resetGame = async () => {
+  stopMusic();
+  if (roomRef) await remove(roomRef);
+  roomCode = '';
+  selectedConf = -1;
+  scores = {};
+  currentQ = 0;
+  playerNames = {};
+  document.getElementById('header-room').textContent = '----';
+  document.querySelectorAll('.conf-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn-create-room').disabled = true;
+  showScreen('setup');
+};
+
+// ══════════════════════════════════════════
+// LOBBY SETUP
+// ══════════════════════════════════════════
+function setupLobby() {
+  const playerUrl = `${PLAYER_URL_BASE}?sala=${roomCode}`;
+  document.getElementById('player-url-display').textContent = playerUrl;
+  document.getElementById('room-code-display').textContent = roomCode;
+  document.getElementById('conf-name-display').textContent = CONFERENCIAS[selectedConf].nombre;
+  document.getElementById('podium-conf-name').textContent = CONFERENCIAS[selectedConf].nombre;
+
+  // QR
+  const qrDiv = document.getElementById('qr-container');
+  qrDiv.innerHTML = '';
+  new QRCode(qrDiv, { text: playerUrl, width: 120, height: 120, colorDark: '#00102E', colorLight: '#ffffff' });
+
+  // Listen players
+  unsubPlayers = onValue(ref(db, `quiz_conferencia/salas/${roomCode}/jugadores`), snap => {
+    playerNames = snap.val() || {};
+    const names = Object.keys(playerNames);
+    document.getElementById('player-count').textContent = names.length;
+    const list = document.getElementById('players-list');
+    list.innerHTML = '';
+    names.forEach(n => {
+      const chip = document.createElement('div');
+      chip.className = 'player-chip';
+      chip.textContent = n;
+      list.appendChild(chip);
+    });
+    // Init scores
+    names.forEach(n => { if (!scores[n]) scores[n] = 0; });
+  });
+}
+
+// ══════════════════════════════════════════
+// QUESTION
+// ══════════════════════════════════════════
+function showQuestion(idx) {
+  const q = questions[idx];
+
+  // Progress dots
+  const prog = document.getElementById('q-progress');
+  prog.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const d = document.createElement('div');
+    d.className = 'q-dot' + (i < idx ? ' done' : i === idx ? ' active' : '');
+    prog.appendChild(d);
+  }
+
+  document.getElementById('q-count-label').textContent = `PREGUNTA ${idx+1} DE 5`;
+  document.getElementById('q-num-label').textContent = `PREGUNTA ${idx+1}`;
+  document.getElementById('q-text').textContent = q.texto;
+
+  // Options (no correct marker on admin)
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  q.opciones.forEach((op, i) => {
+    const card = document.createElement('div');
+    card.className = 'option-card';
+    card.innerHTML = `<div class="opt-letter ${COLORS[i]}">${LETTERS[i]}</div><div class="opt-text">${op}</div>`;
+    grid.appendChild(card);
+  });
+
+  // Answer bars
+  answerCounts = {0:0,1:0,2:0,3:0};
+  renderAnsBars(answerCounts, Object.keys(playerNames).length);
+
+  document.getElementById('btn-reveal').style.display = 'block';
+  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('btn-finish').style.display = 'none';
+  document.getElementById('ranking-panel').style.display = 'none';
+
+  // Listen answers
+  if (unsubAnswers) unsubAnswers();
+  unsubAnswers = onValue(ref(db, `quiz_conferencia/salas/${roomCode}/respuestas/${idx}`), snap => {
+    const data = snap.val() || {};
+    answerCounts = {0:0,1:0,2:0,3:0};
+    answered = {};
+    Object.entries(data).forEach(([name, d]) => {
+      answered[name] = d;
+      answerCounts[d.opcion] = (answerCounts[d.opcion] || 0) + 1;
+    });
+    renderAnsBars(answerCounts, Object.keys(playerNames).length);
+  });
+
+  startTimer(40);
+}
+
+function renderAnsBars(counts, total) {
+  const bars = document.getElementById('ans-bars');
+  bars.innerHTML = '';
+  [0,1,2,3].forEach(i => {
+    const pct = total > 0 ? Math.round((counts[i]||0)/total*100) : 0;
+    bars.innerHTML += `
+      <div class="ans-bar">
+        <div class="ans-bar-label">${LETTERS[i]}</div>
+        <div class="ans-bar-track"><div class="ans-bar-fill ${COLORS[i]}" style="width:${pct}%"></div></div>
+        <div class="ans-bar-count">${counts[i]||0}</div>
+      </div>`;
+  });
+}
+
+function startTimer(seconds) {
+  clearInterval(timerInterval);
+  timeLeft = seconds;
+  const circ = document.getElementById('timer-circle');
+  const txt = document.getElementById('timer-text');
+  const circumference = 213.6;
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    txt.textContent = timeLeft;
+    const offset = circumference * (1 - timeLeft / seconds);
+    circ.style.strokeDashoffset = offset;
+    if (timeLeft <= 10) { circ.style.stroke = '#EA4335'; txt.style.color = '#EA4335'; }
+    else if (timeLeft <= 20) { circ.style.stroke = '#FBBC05'; txt.style.color = '#FBBC05'; }
+    else { circ.style.stroke = '#34A853'; txt.style.color = '#fff'; }
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      revealAnswer();
+    }
+  }, 1000);
+}
+
+function showRanking() {
+  // Compute scores from answered
+  const q = questions[currentQ];
+  Object.entries(answered).forEach(([name, d]) => {
+    if (d.opcion === q.correcta) {
+      const speedBonus = Math.round((d.tiempo / 40) * 50);
+      scores[name] = (scores[name] || 0) + 100 + speedBonus;
+    }
+  });
+
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]).slice(0,5);
+  const panel = document.getElementById('ranking-panel');
+  const list = document.getElementById('ranking-list');
+  const medals = ['🥇','🥈','🥉','4°','5°'];
+  list.innerHTML = sorted.map((([n,s],i) => `
+    <div class="rank-row">
+      <div class="rank-pos">${medals[i]||i+1}</div>
+      <div class="rank-name">${n}</div>
+      <div class="rank-pts">${s} pts</div>
+    </div>`)).join('');
+  panel.style.display = 'block';
+}
+
+// ══════════════════════════════════════════
+// PODIUM
+// ══════════════════════════════════════════
+function renderPodium() {
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  const top3 = sorted.slice(0, 3);
+  const stage = document.getElementById('podium-stage');
+  stage.innerHTML = '';
+
+  const order = [
+    top3[1] ? { ...top3[1], pos: 2, cls: 'second', block: 'second', label: '2', icon: '🥈', delay: 300 } : null,
+    top3[0] ? { ...top3[0], pos: 1, cls: 'first', block: 'first', label: '1', icon: '👑', delay: 700 } : null,
+    top3[2] ? { ...top3[2], pos: 3, cls: 'third', block: 'third', label: '3', icon: '🥉', delay: 100 } : null,
+  ].filter(Boolean);
+
+  order.forEach(p => {
+    const el = document.createElement('div');
+    el.className = `podium-place`;
+    el.innerHTML = `
+      <div class="podium-avatar ${p.cls}">${p.cls === 'first' ? '<div class="crown">👑</div>' : ''}${p[0].charAt(0).toUpperCase()}</div>
+      <div class="podium-name">${p[0]}</div>
+      <div class="podium-score">${p[1]} pts</div>
+      <div class="podium-block ${p.block}"><div class="block-num">${p.label}</div></div>`;
+    stage.appendChild(el);
+    setTimeout(() => el.classList.add('show'), p.delay);
+  });
+}
+
+// ══════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════
+function startConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const particles = [];
+  const colors = ['#4285F4','#EA4335','#FBBC05','#34A853','#fff','#003DA5'];
+  for (let i = 0; i < 180; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      w: Math.random() * 12 + 4,
+      h: Math.random() * 6 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 4,
+      vy: Math.random() * 4 + 2,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - 0.5) * 8
+    });
+  }
+  let frame;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+      p.x += p.vx; p.y += p.vy; p.rot += p.rotV;
+      if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
+    });
+    frame = requestAnimationFrame(draw);
+  }
+  draw();
+  setTimeout(() => { cancelAnimationFrame(frame); ctx.clearRect(0, 0, canvas.width, canvas.height); }, 8000);
+}
+
+// ══════════════════════════════════════════
+// MUSIC (Web Audio API — synth beats)
+// ══════════════════════════════════════════
+let audioCtx = null;
+let tensionNodes = [];
+let partyNodes = [];
+
+function getTensionMusic() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // Simple pulsing tension loop
+  const notes = [220, 246.94, 261.63, 246.94];
+  let i = 0;
+  const master = audioCtx.createGain();
+  master.gain.value = 0.15;
+  master.connect(audioCtx.destination);
+  const intervalId = setInterval(() => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = notes[i % notes.length];
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    osc.connect(gain);
+    gain.connect(master);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.45);
+    i++;
+  }, 500);
+  tensionNodes.push(intervalId);
+}
+
+function playTensionMusic() {
+  try { getTensionMusic(); } catch(e) {}
+}
+
+function stopMusic() {
+  tensionNodes.forEach(id => clearInterval(id));
+  tensionNodes = [];
+  if (audioCtx) { try { audioCtx.close(); } catch(e) {} audioCtx = null; }
+}
+
+function playPartyMusic() {
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const master = audioCtx.createGain();
+    master.gain.value = 0.2;
+    master.connect(audioCtx.destination);
+    const melody = [523, 659, 784, 1046, 784, 659, 523, 392];
+    melody.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      const t = audioCtx.currentTime + i * 0.2;
+      gain.gain.setValueAtTime(0.4, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      osc.connect(gain);
+      gain.connect(master);
+      osc.start(t);
+      osc.stop(t + 0.4);
+    });
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quiz Go Live Alpina 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#00102E;--blue:#003DA5;--blue2:#0052CC;
+  --g-blue:#4285F4;--g-red:#EA4335;--g-yellow:#FBBC05;--g-green:#34A853;
+  --card:#001847;--border:rgba(255,255,255,0.10);--muted:#7B9AC4;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:#00102E;
+  background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  font-family:'Nunito',sans-serif;color:#fff;
+  display:flex;flex-direction:column;
+  min-height:100vh;overflow-y:auto;
+}
+.top-bar{height:4px;background:linear-gradient(90deg,var(--g-blue) 25%,var(--g-red) 25% 50%,var(--g-yellow) 50% 75%,var(--g-green) 75%);flex-shrink:0;}
+
+.screen{display:none;flex:1;flex-direction:column;animation:fadeIn .35s ease;}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── JOIN SCREEN ── */
+#screen-join{align-items:center;justify-content:center;padding:24px 20px;}
+.join-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:32px 24px;width:100%;max-width:380px;text-align:center;position:relative;overflow:hidden;}
+.join-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g-blue),var(--g-green));}
+.join-logo{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;letter-spacing:3px;color:var(--muted);margin-bottom:24px;}
+.join-logo span{color:var(--g-yellow);}
+.join-card h2{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:900;margin-bottom:6px;}
+.join-card p{color:var(--muted);font-size:14px;margin-bottom:28px;}
+.input-group{margin-bottom:16px;text-align:left;}
+.input-group label{font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--muted);display:block;margin-bottom:8px;}
+.input-group input{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid var(--border);border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:600;padding:14px 16px;outline:none;transition:border .2s;}
+.input-group input:focus{border-color:var(--g-blue);}
+.input-group input::placeholder{color:var(--muted);}
+.btn-join{background:linear-gradient(135deg,var(--g-blue),var(--blue2));border:none;border-radius:100px;color:#fff;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;padding:16px;cursor:pointer;width:100%;box-shadow:0 8px 24px rgba(66,133,244,0.4);transition:all .2s;margin-top:8px;}
+.btn-join:active{transform:scale(0.97);}
+.error-msg{color:var(--g-red);font-size:13px;margin-top:8px;display:none;}
+
+/* ── WAITING SCREEN ── */
+#screen-waiting{align-items:center;justify-content:center;padding:32px 20px;text-align:center;}
+.waiting-icon{font-size:64px;margin-bottom:20px;animation:bounce 1.5s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+#screen-waiting h2{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+#screen-waiting p{color:var(--muted);font-size:15px;margin-bottom:24px;}
+.waiting-badge{background:rgba(66,133,244,0.15);border:1px solid rgba(66,133,244,0.3);border-radius:100px;display:inline-block;padding:8px 24px;font-size:13px;font-weight:700;color:var(--g-blue);}
+.conf-name-badge{background:rgba(52,168,83,0.15);border:1px solid rgba(52,168,83,0.3);border-radius:12px;padding:12px 20px;margin-top:16px;font-size:14px;font-weight:600;color:#a8d8b8;}
+.pulse-dots{display:flex;gap:8px;justify-content:center;margin-top:24px;}
+.pulse-dot{width:10px;height:10px;border-radius:50%;background:var(--g-blue);animation:pulseDot 1.2s ease-in-out infinite;}
+.pulse-dot:nth-child(2){animation-delay:.2s;background:var(--g-red);}
+.pulse-dot:nth-child(3){animation-delay:.4s;background:var(--g-yellow);}
+@keyframes pulseDot{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.2)}}
+
+/* ── QUESTION SCREEN ── */
+#screen-question{padding:16px 16px 24px;}
+.q-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.q-top-label{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--muted);}
+.q-top-score{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:var(--g-yellow);}
+
+.timer-bar-wrap{margin-bottom:14px;}
+.timer-bar-track{height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+.timer-bar-fill{height:100%;border-radius:4px;transition:width .9s linear,background .5s;}
+.timer-bar-num{text-align:right;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;margin-top:4px;}
+
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g-blue),var(--g-red),var(--g-yellow),var(--g-green));}
+.q-card .q-text{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;line-height:1.35;}
+
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt-btn{background:var(--card);border:2px solid var(--border);border-radius:16px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;padding:16px 10px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:80px;justify-content:center;text-align:center;line-height:1.3;position:relative;overflow:hidden;}
+.opt-btn .opt-letter-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+.opt-btn.a .opt-letter-badge{background:rgba(66,133,244,0.3);color:var(--g-blue);}
+.opt-btn.b .opt-letter-badge{background:rgba(234,67,53,0.3);color:var(--g-red);}
+.opt-btn.c .opt-letter-badge{background:rgba(251,188,5,0.3);color:var(--g-yellow);}
+.opt-btn.d .opt-letter-badge{background:rgba(52,168,83,0.3);color:var(--g-green);}
+.opt-btn:active{transform:scale(0.96);}
+.opt-btn.selected{border-width:2.5px;}
+.opt-btn.selected.a{border-color:var(--g-blue);background:rgba(66,133,244,0.2);}
+.opt-btn.selected.b{border-color:var(--g-red);background:rgba(234,67,53,0.2);}
+.opt-btn.selected.c{border-color:var(--g-yellow);background:rgba(251,188,5,0.2);}
+.opt-btn.selected.d{border-color:var(--g-green);background:rgba(52,168,83,0.2);}
+.opt-btn.correct{border-color:var(--g-green)!important;background:rgba(52,168,83,0.25)!important;}
+.opt-btn.wrong{border-color:var(--g-red)!important;background:rgba(234,67,53,0.12)!important;opacity:0.5;}
+.opt-btn:disabled{cursor:not-allowed;}
+
+/* ── FEEDBACK SCREEN ── */
+#screen-feedback{align-items:center;justify-content:center;padding:32px 20px;text-align:center;}
+.feedback-icon{font-size:80px;margin-bottom:16px;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+#screen-feedback h2{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:900;margin-bottom:8px;}
+#screen-feedback p{color:var(--muted);font-size:15px;margin-bottom:24px;}
+.pts-earned{font-family:'Montserrat',sans-serif;font-size:42px;font-weight:900;color:var(--g-yellow);}
+.pts-label{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:1px;}
+.waiting-next{color:var(--muted);font-size:13px;margin-top:24px;font-style:italic;}
+
+/* ── RESULTS / PODIUM ── */
+#screen-results{align-items:center;justify-content:center;padding:24px 20px;text-align:center;}
+.results-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--g-yellow),var(--g-red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.my-rank-card{background:var(--card);border:2px solid var(--g-yellow);border-radius:20px;padding:24px;width:100%;max-width:320px;margin:20px 0;}
+.my-rank-pos{font-family:'Montserrat',sans-serif;font-size:56px;font-weight:900;line-height:1;}
+.my-rank-name{font-size:18px;font-weight:700;margin:8px 0 4px;}
+.my-rank-pts{font-size:24px;font-weight:700;color:var(--g-yellow);}
+.my-rank-pts span{font-size:14px;color:var(--muted);}
+.thanks-msg{color:var(--muted);font-size:15px;max-width:300px;margin:0 auto;}
+.trophy-anim{font-size:56px;animation:bounce 1.5s infinite;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+
+<!-- JOIN -->
+<div id="screen-join" class="screen active">
+  <div class="join-card" style="margin:auto;">
+    <div class="join-logo">GO LIVE <span>ALPINA</span> 2026</div>
+    <h2>🎯 Quiz Conferencia</h2>
+    <p>Ingresa tu nombre para unirte a la partida</p>
+    <div class="input-group">
+      <label>TU NOMBRE</label>
+      <input type="text" id="input-name" placeholder="Ej: María García" maxlength="24" autocomplete="off" autocapitalize="words">
+    </div>
+    <div class="input-group">
+      <label>CÓDIGO DE SALA</label>
+      <input type="text" id="input-sala" placeholder="Ej: AB3X" maxlength="6" autocomplete="off" style="text-transform:uppercase;letter-spacing:4px;font-size:20px;text-align:center;">
+    </div>
+    <div class="error-msg" id="error-msg">Sala no encontrada. Verifica el código.</div>
+    <button class="btn-join" onclick="joinGame()">Unirme al Quiz →</button>
+  </div>
+</div>
+
+<!-- WAITING -->
+<div id="screen-waiting" class="screen">
+  <div class="waiting-icon">🎮</div>
+  <h2>¡Ya estás dentro!</h2>
+  <p>Espera a que el facilitador inicie el quiz...</p>
+  <div class="waiting-badge" id="waiting-name-badge">Cargando...</div>
+  <div class="conf-name-badge" id="waiting-conf-badge"></div>
+  <div class="pulse-dots">
+    <div class="pulse-dot"></div>
+    <div class="pulse-dot"></div>
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div id="screen-question" class="screen">
+  <div class="q-top">
+    <div class="q-top-label" id="q-label">PREGUNTA 1 / 5</div>
+    <div class="q-top-score" id="my-score-label">0 pts</div>
+  </div>
+  <div class="timer-bar-wrap">
+    <div class="timer-bar-track">
+      <div class="timer-bar-fill" id="timer-bar" style="width:100%;background:var(--g-green);"></div>
+    </div>
+    <div class="timer-bar-num" id="timer-bar-num" style="color:#fff;">40</div>
+  </div>
+  <div class="q-card">
+    <div class="q-text" id="q-text-player">Cargando...</div>
+  </div>
+  <div class="opts-grid" id="opts-grid"></div>
+</div>
+
+<!-- FEEDBACK -->
+<div id="screen-feedback" class="screen">
+  <div class="feedback-icon" id="feedback-icon">✅</div>
+  <h2 id="feedback-title">¡Correcto!</h2>
+  <p id="feedback-subtitle">Respuesta correcta</p>
+  <div class="pts-earned" id="pts-earned">+150</div>
+  <div class="pts-label">PUNTOS GANADOS</div>
+  <div class="pts-earned" id="total-pts" style="font-size:24px;margin-top:12px;color:var(--muted);"></div>
+  <div class="pts-label">TOTAL ACUMULADO</div>
+  <div class="waiting-next">Esperando siguiente pregunta...</div>
+</div>
+
+<!-- RESULTS -->
+<div id="screen-results" class="screen">
+  <div class="trophy-anim">🏆</div>
+  <div class="results-title">Quiz Finalizado</div>
+  <div class="my-rank-card">
+    <div class="my-rank-pos" id="my-rank-pos">?</div>
+    <div class="my-rank-name" id="my-rank-name"></div>
+    <div class="my-rank-pts"><span>Puntaje total: </span><span id="my-rank-pts-val"></span></div>
+  </div>
+  <p class="thanks-msg">¡Gracias por participar! Mira la pantalla principal para ver el podio de ganadores 🎉</p>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+import { getDatabase, ref, set, get, onValue, update } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBSymU8ZEuwbopsg0Cf-eX2fMU7r1LDbPw",
+  authDomain: "alpina-go-live-2026.firebaseapp.com",
+  databaseURL: "https://alpina-go-live-2026-default-rtdb.firebaseio.com",
+  projectId: "alpina-go-live-2026",
+  storageBucket: "alpina-go-live-2026.appspot.com",
+  messagingSenderId: "664989840156",
+  appId: "1:664989840156:web:c9014078af4ecbbe9680d9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ─────────────────────
+const LETTERS = ['A','B','C','D'];
+const COLORS = ['a','b','c','d'];
+const TOTAL_TIME = 40;
+
+let playerName = '';
+let roomCode = '';
+let myScore = 0;
+let currentQIdx = -1;
+let selectedOption = null;
+let answerTime = TOTAL_TIME;
+let timerInterval = null;
+let hasAnswered = false;
+let unsubState = null;
+
+// Pre-fill sala from URL
+const urlParams = new URLSearchParams(window.location.search);
+const salaPre = urlParams.get('sala');
+if (salaPre) document.getElementById('input-sala').value = salaPre.toUpperCase();
+
+// ─────────────────────
+window.joinGame = async () => {
+  playerName = document.getElementById('input-name').value.trim();
+  roomCode = document.getElementById('input-sala').value.trim().toUpperCase();
+  const errEl = document.getElementById('error-msg');
+  errEl.style.display = 'none';
+
+  if (!playerName || playerName.length < 2) {
+    errEl.textContent = 'Por favor ingresa tu nombre (mínimo 2 caracteres).';
+    errEl.style.display = 'block'; return;
+  }
+  if (!roomCode || roomCode.length < 3) {
+    errEl.textContent = 'Ingresa el código de sala.';
+    errEl.style.display = 'block'; return;
+  }
+
+  // Sanitize name for Firebase key
+  const safeKey = playerName.replace(/[.#$\[\]\/]/g, '_');
+
+  const salaSnap = await get(ref(db, `quiz_conferencia/salas/${roomCode}`));
+  if (!salaSnap.exists()) {
+    errEl.textContent = 'Sala no encontrada. Verifica el código.';
+    errEl.style.display = 'block'; return;
+  }
+
+  const salaData = salaSnap.val();
+  // Register player
+  await set(ref(db, `quiz_conferencia/salas/${roomCode}/jugadores/${safeKey}`), {
+    nombre: playerName,
+    score: 0,
+    joinedAt: Date.now()
+  });
+
+  document.getElementById('waiting-name-badge').textContent = `¡Hola, ${playerName}!`;
+  document.getElementById('waiting-conf-badge').textContent = salaData.conferencia || '';
+
+  showScreen('waiting');
+  listenState(safeKey);
+};
+
+function listenState(safeKey) {
+  unsubState = onValue(ref(db, `quiz_conferencia/salas/${roomCode}`), snap => {
+    const data = snap.val();
+    if (!data) return;
+
+    if (data.estado === 'pregunta' && data.preguntaActual !== undefined) {
+      const qIdx = data.preguntaActual;
+      if (qIdx !== currentQIdx) {
+        currentQIdx = qIdx;
+        hasAnswered = false;
+        selectedOption = null;
+        answerTime = TOTAL_TIME;
+        if (data.preguntas && data.preguntas[qIdx]) {
+          renderQuestion(data.preguntas[qIdx], qIdx, safeKey);
+        }
+      }
+    } else if (data.estado === 'revelada') {
+      clearInterval(timerInterval);
+      if (!hasAnswered) {
+        // didn't answer in time
+        showFeedback(false, null, 0, data.respuestaCorrecta);
+      }
+    } else if (data.estado === 'podio') {
+      showFinalResults(safeKey);
+    }
+  });
+}
+
+function renderQuestion(q, idx, safeKey) {
+  showScreen('question');
+  document.getElementById('q-label').textContent = `PREGUNTA ${idx+1} / 5`;
+  document.getElementById('my-score-label').textContent = `${myScore} pts`;
+  document.getElementById('q-text-player').textContent = q.texto;
+
+  const grid = document.getElementById('opts-grid');
+  grid.innerHTML = '';
+  q.opciones.forEach((op, i) => {
+    const btn = document.createElement('button');
+    btn.className = `opt-btn ${COLORS[i]}`;
+    btn.innerHTML = `<div class="opt-letter-badge">${LETTERS[i]}</div><span>${op}</span>`;
+    btn.onclick = () => handleAnswer(i, btn, q, idx, safeKey);
+    grid.appendChild(btn);
+  });
+
+  startTimerBar(safeKey, q, idx);
+}
+
+function handleAnswer(optIdx, btn, q, qIdx, safeKey) {
+  if (hasAnswered) return;
+  hasAnswered = true;
+  clearInterval(timerInterval);
+
+  selectedOption = optIdx;
+  const elapsed = TOTAL_TIME - answerTime;
+  const tiempoRestante = answerTime; // seconds remaining
+
+  // Disable all buttons
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  btn.classList.add('selected');
+
+  // Save to Firebase
+  set(ref(db, `quiz_conferencia/salas/${roomCode}/respuestas/${qIdx}/${safeKey}`), {
+    opcion: optIdx,
+    tiempo: tiempoRestante,
+    ts: Date.now()
+  });
+
+  // Wait for reveal
+  document.getElementById('q-label').textContent = `⏳ Esperando resultado...`;
+}
+
+function showFeedback(isCorrect, optIdx, ptsGained, correctIdx) {
+  // Reveal correct/wrong on question screen briefly
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((b, i) => {
+    if (i === correctIdx) b.classList.add('correct');
+    else b.classList.add('wrong');
+  });
+
+  setTimeout(() => {
+    if (isCorrect === null) {
+      // calculate
+      if (optIdx === correctIdx) {
+        const speedBonus = Math.round((answerTime / TOTAL_TIME) * 50);
+        ptsGained = 100 + speedBonus;
+        isCorrect = true;
+      } else {
+        ptsGained = 0;
+        isCorrect = false;
+      }
+    }
+
+    if (isCorrect) myScore += ptsGained;
+
+    showScreen('feedback');
+    document.getElementById('feedback-icon').textContent = isCorrect ? '✅' : '❌';
+    document.getElementById('feedback-title').textContent = isCorrect ? '¡Correcto!' : '¡Incorrecto!';
+    document.getElementById('feedback-subtitle').textContent = isCorrect
+      ? `Velocidad: +${ptsGained - 100} pts bonus` : 'Sin puntos esta vez';
+    document.getElementById('pts-earned').textContent = isCorrect ? `+${ptsGained}` : '0';
+    document.getElementById('pts-earned').style.color = isCorrect ? 'var(--g-green)' : 'var(--g-red)';
+    document.getElementById('total-pts').textContent = `${myScore} pts`;
+  }, 800);
+}
+
+function startTimerBar(safeKey, q, qIdx) {
+  answerTime = TOTAL_TIME;
+  const bar = document.getElementById('timer-bar');
+  const num = document.getElementById('timer-bar-num');
+  bar.style.width = '100%';
+  bar.style.background = 'var(--g-green)';
+  num.style.color = '#fff';
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    answerTime--;
+    const pct = (answerTime / TOTAL_TIME) * 100;
+    bar.style.width = pct + '%';
+    num.textContent = answerTime;
+    if (answerTime <= 10) { bar.style.background = 'var(--g-red)'; num.style.color = 'var(--g-red)'; }
+    else if (answerTime <= 20) { bar.style.background = 'var(--g-yellow)'; num.style.color = 'var(--g-yellow)'; }
+    if (answerTime <= 0) {
+      clearInterval(timerInterval);
+      if (!hasAnswered) {
+        hasAnswered = true;
+        // Save no answer
+        set(ref(db, `quiz_conferencia/salas/${roomCode}/respuestas/${qIdx}/${safeKey}`), {
+          opcion: -1, tiempo: 0, ts: Date.now()
+        });
+      }
+    }
+  }, 1000);
+}
+
+async function showFinalResults(safeKey) {
+  showScreen('results');
+  document.getElementById('my-rank-name').textContent = playerName;
+  document.getElementById('my-rank-pts-val').textContent = `${myScore} pts`;
+
+  // Get all scores to compute rank
+  const jugSnap = await get(ref(db, `quiz_conferencia/salas/${roomCode}/jugadores`));
+  // We can't get all scores easily without them being stored; show own score
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('my-rank-pos').textContent = myScore > 0 ? '🎉' : '😅';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+}
+</script>
+</body>
+</html>
