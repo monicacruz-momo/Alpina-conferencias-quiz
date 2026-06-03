@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Live Alpina 2026 — Quiz Post-Conferencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#00102E;--blue:#003DA5;--g-blue:#4285F4;--g-red:#EA4335;--g-yellow:#FBBC05;--g-green:#34A853;
+  --card:#001847;--border:rgba(255,255,255,0.10);--muted:#7B9AC4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:#00102E;
+  background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  font-family:'Nunito',sans-serif;color:#fff;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;
+}
+.top-bar{position:fixed;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--g-blue) 25%,var(--g-red) 25% 50%,var(--g-yellow) 50% 75%,var(--g-green) 75%);}
+
+.container{max-width:480px;width:100%;text-align:center;}
+
+.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;letter-spacing:3px;color:var(--muted);}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--g-yellow);}
+
+h1{font-family:'Montserrat',sans-serif;font-size:32px;font-weight:900;line-height:1.1;margin-bottom:8px;}
+h1 span{color:var(--g-yellow);}
+.subtitle{color:var(--muted);font-size:15px;margin-bottom:48px;}
+
+.cards{display:flex;flex-direction:column;gap:16px;margin-bottom:40px;}
+
+.nav-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:28px 24px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:20px;transition:all .2s;position:relative;overflow:hidden;}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.nav-card.admin::before{background:linear-gradient(90deg,var(--g-blue),var(--g-green));}
+.nav-card.player::before{background:linear-gradient(90deg,var(--g-yellow),var(--g-red));}
+.nav-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.2);box-shadow:0 16px 40px rgba(0,0,0,0.4);}
+.nav-card:active{transform:translateY(0);}
+
+.card-icon{font-size:48px;flex-shrink:0;}
+.card-body{text-align:left;}
+.card-body h2{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;margin-bottom:4px;}
+.card-body p{color:var(--muted);font-size:13px;line-height:1.5;}
+.card-arrow{margin-left:auto;font-size:20px;color:var(--muted);flex-shrink:0;}
+
+.footer-note{color:var(--muted);font-size:12px;line-height:1.6;}
+.footer-note strong{color:#fff;}
+
+.google-bar{display:flex;gap:0;justify-content:center;margin-bottom:24px;}
+.g-dot{width:12px;height:12px;border-radius:50%;}
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+<div class="container">
+
+  <div class="google-bar">
+    <div class="g-dot" style="background:#4285F4;margin-right:6px;"></div>
+    <div class="g-dot" style="background:#EA4335;margin-right:6px;"></div>
+    <div class="g-dot" style="background:#FBBC05;margin-right:6px;"></div>
+    <div class="g-dot" style="background:#34A853;"></div>
+  </div>
+
+  <div class="logo-row">
+    <span>GO LIVE</span>
+    <div class="logo-dot"></div>
+    <span>ALPINA 2026</span>
+    <div class="logo-dot"></div>
+    <span>SERVINFORMACIÓN</span>
+  </div>
+
+  <h1>Quiz<br><span>Post-Conferencia</span></h1>
+  <p class="subtitle">Selecciona tu rol para continuar</p>
+
+  <div class="cards">
+
+    <a href="quiz_conferencia_admin.html" class="nav-card admin">
+      <div class="card-icon">🎛️</div>
+      <div class="card-body">
+        <h2>Panel Facilitador</h2>
+        <p>Proyecta en pantalla grande. Controla el quiz, lanza preguntas y revela el podio ganador.</p>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a href="quiz_conferencia_jugador.html" class="nav-card player">
+      <div class="card-icon">📱</div>
+      <div class="card-body">
+        <h2>Soy Participante</h2>
+        <p>Abre esto en tu celular, ingresa tu nombre y el código de sala para jugar.</p>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+  </div>
+
+  <div class="footer-note">
+    <strong>¿Cómo funciona?</strong><br>
+    El facilitador proyecta el Panel y genera una sala.<br>
+    Los participantes escanean el QR que aparece en pantalla<br>
+    y se unen directamente al juego desde su celular.
+  </div>
+
+</div>
+</body>
+</html>
