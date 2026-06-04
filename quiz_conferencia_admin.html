@@ -337,11 +337,11 @@ const CONFERENCIAS = [
         texto: "Al momento de cargar información, ¿cuál es el límite máximo de fuentes que permite NotebookLM?",
         opciones: [
           "100 fuentes por cuaderno.",
-          "300 fuentes por cuaderno.",
+          "No tiene límite de fuentes.",
           "500 fuentes por cuaderno.",
-          "No tiene límite de fuentes."
+          "300 fuentes por cuaderno."
         ],
-        correcta: 1
+        correcta: 3
       },
       {
         texto: "¿Qué formatos de archivo específicos admite NotebookLM para subir como fuentes?",
@@ -366,12 +366,12 @@ const CONFERENCIAS = [
       {
         texto: "¿Qué función de NotebookLM transforma reportes escritos en 'podcasts'?",
         opciones: [
-          "Traductor de Jerga (simplificación de lenguaje).",
-          "Clonado de Estilo (imitación de tono).",
           "Función 'Audio Overview' o Resumen de Audio.",
+          "Clonado de Estilo (imitación de tono).",
+          "Traductor de Jerga (simplificación de lenguaje).",
           "Actas de Reunión (creación de tablas de tareas)."
         ],
-        correcta: 2
+        correcta: 0
       },
       {
         texto: "¿Cuál de los siguientes NO es un formato de generación de material de estudio en NotebookLM?",
@@ -387,11 +387,11 @@ const CONFERENCIAS = [
         texto: "¿Cuáles son las capacidades principales de la IA sobre los datos en NotebookLM?",
         opciones: [
           "Traduce automáticamente los documentos a múltiples idiomas.",
-          "Elimina la información duplicada y comprime archivos.",
-          "Ayuda a organizar, generar resúmenes y encontrar conexiones entre datos.",
+          "Ayuda a organizar la información, generar resúmenes y encontrar conexiones entre los diferentes datos.",
+          "Elimina la información duplicada y comprime los archivos originales.",
           "Convierte todo el texto en animaciones 3D para realidad virtual."
         ],
-        correcta: 2
+        correcta: 1
       }
     ]
   },
@@ -411,22 +411,22 @@ const CONFERENCIAS = [
       {
         texto: "¿Cómo se describe a 'Google AI Studio'?",
         opciones: [
-          "Una red social corporativa exclusiva para empleados de Alpina.",
-          "Una plataforma para explorar, experimentar y crear prototipos usando los modelos de IA más avanzados de Google.",
-          "Un software de diseño gráfico para crear empaques de productos.",
-          "Una herramienta financiera para gestión y proyección de ventas."
+          "Como una red social corporativa exclusiva para los empleados de Alpina y Servinformación.",
+          "Como un software de diseño gráfico vectorial para crear los empaques físicos de los productos.",
+          "Como una plataforma en la nube para explorar, experimentar y crear rápidamente prototipos de soluciones utilizando los modelos de IA más avanzados de Google.",
+          "Como una herramienta financiera para la gestión y proyección de ventas automatizadas."
         ],
-        correcta: 1
+        correcta: 2
       },
       {
         texto: "Al hablar de Veo para generación de video, ¿cuáles características se destacan?",
         opciones: [
-          "Generación exclusiva de gráficos en 3D y simulaciones de realidad virtual.",
-          "Edición de código fuente HTML y creación de bases de datos.",
           "Audio nativo integrado, alto realismo, coherencia temporal y control del primer y último cuadro.",
+          "Edición de código fuente HTML y creación de bases de datos.",
+          "Generación exclusiva de gráficos en 3D y simulaciones de realidad virtual.",
           "Creación automática de hojas de cálculo y presentaciones estáticas."
         ],
-        correcta: 2
+        correcta: 0
       },
       {
         texto: "¿Qué herramientas están integradas con Gemini a través de 'Extensiones'?",
@@ -442,11 +442,11 @@ const CONFERENCIAS = [
         texto: "¿Cuáles son algunos de los Gems prediseñados por Google?",
         opciones: [
           "Creador de logotipos, Editor de videos y Gestor de redes sociales.",
-          "Storybook, Exploración de ideas, Orientación profesional y Asistente de programación.",
+          "Traductor simultáneo, Corrector ortográfico y Creador de encuestas.",
           "Asistente de ventas, Analista financiero y Generador de contratos.",
-          "Traductor simultáneo, Corrector ortográfico y Creador de encuestas."
+          "Storybook, Exploración de ideas, Orientación profesional y Asistente de programación."
         ],
-        correcta: 1
+        correcta: 3
       },
       {
         texto: "¿Qué funciones de edición se pueden realizar con Stitch o Nano Banana?",
@@ -486,22 +486,22 @@ const CONFERENCIAS = [
       {
         texto: "¿En qué consiste la demostración sobre el 'Manejo de avatares' en Google Vids?",
         opciones: [
-          "Edición avanzada de personajes en 3D para videojuegos multijugador.",
-          "Un narrador o presentador digital fotorrealista que relata el guion del video.",
-          "Configuración de fotos de perfil para cuentas de Gmail y Google Chat.",
-          "Sistema de seguridad biométrica basado en reconocimiento facial."
+          "En la edición avanzada de personajes en 3D para videojuegos multijugador interactivos.",
+          "En la configuración de fotos de perfil para las cuentas de Gmail y Google Chat.",
+          "En la demostración de un narrador o presentador digital fotorrealista que relata el guion del video.",
+          "En un sistema de seguridad biométrica basado en reconocimiento facial."
         ],
-        correcta: 1
+        correcta: 2
       },
       {
         texto: "¿Qué describe mejor la función de 'Voz en off' con IA en Google Vids?",
         opciones: [
           "Grabar audio con micrófonos externos de estudio y ecualizarlos manualmente.",
-          "Convertir texto a voz (text-to-speech) seleccionando tonos de voz e idiomas.",
+          "Silenciar el video completamente para solo dejar imágenes fijas.",
           "Clonar voces de celebridades internacionales sin autorización.",
-          "Silenciar el video completamente para solo dejar imágenes fijas."
+          "Convertir texto a voz (text-to-speech) seleccionando diferentes tonos de voz e idiomas."
         ],
-        correcta: 1
+        correcta: 3
       },
       {
         texto: "¿Cómo apoya la IA de Google Vids en la 'Ambientación Musical'?",
@@ -516,32 +516,22 @@ const CONFERENCIAS = [
       {
         texto: "¿Cuál es una ventaja clave de accesibilidad que ofrece Google Vids?",
         opciones: [
-          "La generación automática de subtítulos a partir de la pista de voz o del guion del video.",
           "La interpretación de videos a lenguaje de señas mediante animación 3D.",
+          "La generación automática de subtítulos a partir de la pista de voz o del guion del video.",
           "El bloqueo de reproducción si el espectador no tiene auriculares puestos.",
           "La eliminación de todo el texto en pantalla para concentrarse en el sonido."
         ],
-        correcta: 0
+        correcta: 1
       },
       {
         texto: "¿Qué función cumple la herramienta de 'Teleprompter' en Google Vids?",
         opciones: [
-          "Permite leer el guion en la pantalla de forma fluida mientras se graba video.",
-          "Traduce en vivo la voz del orador a más de cinco idiomas en tiempo real.",
           "Ajusta automáticamente los colores del fondo a los estándares de marca de Alpina.",
+          "Traduce en vivo la voz del orador a más de cinco idiomas en tiempo real.",
+          "Permite leer el guion en la pantalla de forma fluida mientras el usuario realiza su propia grabación de video.",
           "Envía correos automáticos a invitados de Google Meet avisando del nuevo video."
         ],
-        correcta: 0
-      },
-      {
-        texto: "¿Cuál es el objetivo y duración de la conferencia de Google Vids en el plan de Alpina?",
-        opciones: [
-          "Enseñar programación avanzada de macros en 120 minutos.",
-          "Mostrar en 30 minutos cómo Workspace con Gemini puede mejorar el trabajo diario mediante creación de video.",
-          "Explicar la consola de administración de TI y ciberseguridad en 3 horas.",
-          "Diseñar empaques 3D de productos de Alpina en 15 minutos."
-        ],
-        correcta: 1
+        correcta: 2
       }
     ]
   }
